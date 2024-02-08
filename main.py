@@ -1,6 +1,6 @@
 import socket
 server = socket.socket() 
-server.bind(("94.142.142.35", 5000)) 
+server.bind(("94.142.142.35", 4000)) 
 server.listen() 
 client_socket, client_address = server.accept()
 print(client_address, "has connected")
