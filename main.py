@@ -4,9 +4,9 @@ import multiprocessing
 from concurrent.futures import ProcessPoolExecutor
 from db import connection
 from db import interface
-from db.models import Tcp_result, Tcp_info
+from db.models import TcpResult, TcpInfo
 
-print(Tcp_result)
+print(TcpResult)
 
 def check_tcp(params):
     name, host, port, first_query, second_query, timeout, request_interval = params
@@ -34,11 +34,11 @@ def check_tcp(params):
                 "second_response": 'ghj'
             }
             print(tcp_data)
-            tcp_row = interface.get_row(Tcp_result, (Tcp_result.name == name))
+            tcp_row = interface.get_row(TcpResult, (TcpResult.name == name))
             if tcp_row:
-                interface.update_row(Tcp_result, (Tcp_result.name == name), tcp_data)
+                interface.update_row(TcpResult, (TcpResult.name == name), tcp_data)
             else:
-                interface.set_row(Tcp_result, tcp_data)
+                interface.set_row(TcpResult, tcp_data)
             s.close()
             time.sleep(6)
         except Exception as e:
@@ -55,7 +55,7 @@ def run_task_with_timeout(params):
         print('Убили ', params[1])
 
 while True:
-    TCPs = interface.get_row(Tcp_info)
+    TCPs = interface.get_row(TcpInfo)
     tasks = []
     for TCP in TCPs:
         name, host, port = TCP.name, TCP.host, TCP.port
