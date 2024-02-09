@@ -21,6 +21,7 @@ def get_row(Table, filter_condition=None):
                 table = session.query(Table)
                 if filter_condition is not None:
                     table = table.filter(filter_condition)
+                    return table.first()
                 return table.all()
     except Exception as e:
         print(e)

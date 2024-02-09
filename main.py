@@ -7,6 +7,7 @@ from db import interface
 
 Tcp_info = connection.Base.metadata.tables['tcp']
 Tcp_result = connection.Base.metadata.tables['tcp_result']
+print(Tcp_result)
 
 def check_tcp(params):
     name, host, port, first_query, second_query, timeout, request_interval = params
@@ -36,7 +37,7 @@ def check_tcp(params):
                 "second_response": 'ghj'
             }
             print(tcp_data)
-            tcp_row = interface.get_row(Tcp_info, (Tcp_info.host == host, Tcp_info.port == port))
+            tcp_row = interface.get_row(Tcp_result, (Tcp_result.name == name))
             if tcp_row:
                 interface.update_row(Tcp_info, (Tcp_info.host == host, Tcp_info.port == port), tcp_data)
             else:
