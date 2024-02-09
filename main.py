@@ -8,7 +8,7 @@ from db import interface
 Tcp_info = connection.Base.metadata.tables['tcp']
 Tcp_result = connection.Base.metadata.tables['tcp_result']
 def check_tcp(params):
-    name, host, port, first_query, second_query, timeout, interval = params
+    name, host, port, first_query, second_query, timeout, request_interval = params
     while True:
         responses = []
         try:
@@ -23,7 +23,6 @@ def check_tcp(params):
             end_time = time.time()
             wait_time = end_time - start_time
             s.close()
-            time.sleep(interval)
             tcp_data = {
                 "name": name,
                 "status": "ok",
@@ -34,6 +33,7 @@ def check_tcp(params):
             }
             print(tcp_data)
             interface.set_row(Tcp_result, tcp_data)
+            time.sleep(request_interval)
         except Exception as e:
             print(e)
         
@@ -56,8 +56,8 @@ while True:
         print(host)
         print(port)
         first_query, second_query = TCP.first_query, TCP.second_query
-        timeout, interval = TCP.timeout, TCP.request_interval
-        params = (name, host, port, first_query, second_query, timeout, interval)
+        timeout, request_interval = TCP.timeout, TCP.request_interval
+        params = (name, host, port, first_query, second_query, timeout, request_interval)
         tasks.append(params)
     with ProcessPoolExecutor(max_workers=2) as executor:
         executor.map(run_task_with_timeout, tasks)
