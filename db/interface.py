@@ -11,7 +11,7 @@ def update_row(Table, filter_condition, update_data):
             session.query(Table).filter(filter_condition).update(update_data, synchronize_session='fetch')
             session.flush()
             session.commit()
-            ScopedSession.remove()
+            
     except Exception as e:
         print('Update: ', e)
         session.rollback()
@@ -27,6 +27,7 @@ def get_row(Table, filter_condition=None):
     except Exception as e:
         print('Get: ', e)
         session.rollback()
+        return None
         
 
 def set_row(Table, set_data):
@@ -35,7 +36,7 @@ def set_row(Table, set_data):
             session.add(Table(**set_data))
             session.flush()
             session.commit()
-            ScopedSession.remove()
+            
     except Exception as e:
         print('Set: ', e)
         session.rollback()

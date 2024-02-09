@@ -6,7 +6,6 @@ from db import connection
 from db import interface
 from db.models import TcpResult, TcpInfo
 
-print(TcpResult)
 
 def check_tcp(params):
     name, host, port, first_request, second_request, timeout, request_interval = params
@@ -14,7 +13,7 @@ def check_tcp(params):
         try:
             print('Запрос к ', host)
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.settimeout(10)
+            s.settimeout(3)
             start_time = time.time()
             s.connect((host, port))
             
@@ -46,7 +45,7 @@ def check_tcp(params):
                 interface.set_row(TcpResult, tcp_data)
                 print('Сделали запись: ', host)
             
-            time.sleep(15)
+            time.sleep(5)
         except Exception as e:
             print('Check: ', e)
         
@@ -54,7 +53,7 @@ def check_tcp(params):
 def run_task_with_timeout(params):
     p = multiprocessing.Process(target=check_tcp, args=(params,))
     p.start()
-    p.join(timeout=35)
+    p.join(timeout=15)
     if p.is_alive():
         p.terminate()
         p.join()
@@ -63,6 +62,8 @@ def run_task_with_timeout(params):
 while True:
     
     TCPs = interface.get_row(TcpInfo)
+    if not TCPs:
+        continue
     tasks = []
     for TCP in TCPs:
         name, host, port = TCP['name'] , TCP['host'], TCP['port']
@@ -72,7 +73,7 @@ while True:
         tasks.append(params)
     with ProcessPoolExecutor(max_workers=2) as executor:
         executor.map(run_task_with_timeout, tasks)
-    time.sleep(38)
+    time.sleep(17)
     print('Получаем новые данные')
         
         
