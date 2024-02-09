@@ -7,4 +7,4 @@ engine = create_engine(
     echo=False,
 )
 inspector = inspect(engine)
-print(inspector.get_columns('book'))
+print(inspector.get_columns('tcp'))
