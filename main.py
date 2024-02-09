@@ -15,7 +15,7 @@ def check_tcp(params):
         try:
             print('Запрос к ', host)
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.settimeout(15)
+            s.settimeout(2)
             start_time = time.time()
             s.connect((host, port))
             for query in [first_query, second_query]:
@@ -23,7 +23,7 @@ def check_tcp(params):
                 response = s.recv(1024)
                 print(query, response)
                 responses.append(response)
-            s.close()
+            
             end_time = time.time()
             wait_time = end_time - start_time
             print(wait_time)
@@ -41,7 +41,8 @@ def check_tcp(params):
                 interface.update_row(Tcp_info, (Tcp_info.host == host, Tcp_info.port == port), tcp_data)
             else:
                 interface.set_row(Tcp_result, tcp_data)
-            time.sleep(request_interval)
+            s.close()
+            time.sleep(6)
         except Exception as e:
             print(e)
         
@@ -49,7 +50,7 @@ def check_tcp(params):
 def run_task_with_timeout(params):
     p = multiprocessing.Process(target=check_tcp, args=(params,))
     p.start()
-    p.join(timeout=18)
+    p.join(timeout=16)
     if p.is_alive():
         p.terminate()
         p.join()
