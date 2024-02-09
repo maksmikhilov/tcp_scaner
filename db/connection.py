@@ -7,6 +7,6 @@ engine = create_engine(
     echo=False,
 )
 with engine.connect() as con:
-    rs = con.execute('SELECT * FROM tcp')
+    rs = con.execute('SELECT * FROM "tcp"')
     data = rs.fetchall()
     print(data)
