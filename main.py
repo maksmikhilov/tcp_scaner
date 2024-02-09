@@ -1,6 +1,7 @@
 import socket
 import time
 import multiprocessing
+from concurrent.futures import ProcessPoolExecutor
 from db.interface import get_row, set_row
 from db import connection
 from db import interface
@@ -16,8 +17,10 @@ def check_tcp(params):
             for query in [first_query, second_query]:
                 s.send(query.encode())
                 response = s.recv(1024)
+                print(response)
             end_time = time.time()
             wait_time = end_time - start_time
+            print(wait_time)
             s.close()
             time.sleep(interval)
         except Exception as e:
@@ -43,7 +46,8 @@ while True:
         timeout, interval = TCP.timeout, TCP.request_interval
         params = (name, host, port, first_query, second_query, timeout, interval)
         tasks.append(params)
-        with multiprocessing.Pool(64) as pool:
-            pool.map(run_task_with_timeout, tasks)
+        with ProcessPoolExecutor(max_workers=2) as executor:
+            executor.map(run_task_with_timeout, tasks)
+        
         
         
