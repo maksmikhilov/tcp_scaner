@@ -13,8 +13,8 @@ class TcpInfo(Base):
     name = Column(String, default=None)
     host = Column(String, default=None)
     port = Column(Integer, default=None)
-    first_query = Column(String, default=None)
-    second_query = Column(String, default=None)
+    first_request = Column(String, default=None)
+    second_request = Column(String, default=None)
     timeout = Column(Integer, default=None)
     request_interval = Column(Integer, default=None)
 
