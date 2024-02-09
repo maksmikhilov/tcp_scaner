@@ -2,10 +2,12 @@ import socket
 import time
 import multiprocessing
 from concurrent.futures import ProcessPoolExecutor
-from db import connection
 from db import interface
-from db.models import TcpResult, TcpInfo
+from db import models
+from config import NUM_WORKERS, RELOAD_DATA
 
+TcpResult = models.TcpResult
+TcpInfo = models.TcpInfo
 
 def check_tcp(params):
     name, host, port, first_request, second_request, timeout, request_interval = params
@@ -14,7 +16,7 @@ def check_tcp(params):
             print('Запрос к ', host)
             connect_start = time.time()
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.settimeout(3)
+            s.settimeout(5)
             s.connect((host, port))
             connect_end = time.time()
 
@@ -42,7 +44,6 @@ def check_tcp(params):
                 "second_response": 'second_response'
             }
             tcp_row = interface.get_row(TcpResult, (TcpResult.name == name))
-            print(tcp_row)
             if tcp_row:
                 interface.update_row(TcpResult, (TcpResult.name == name), tcp_data)
                 print('Обновили запись: ', host)
@@ -50,7 +51,7 @@ def check_tcp(params):
                 interface.set_row(TcpResult, tcp_data)
                 print('Сделали запись: ', host)
             
-            time.sleep(5)
+            time.sleep(6)
         except Exception as e:
             print('Check: ', e)
         
@@ -58,14 +59,13 @@ def check_tcp(params):
 def run_task_with_timeout(params):
     p = multiprocessing.Process(target=check_tcp, args=(params,))
     p.start()
-    p.join(timeout=15)
+    p.join(timeout=12)
     if p.is_alive():
         p.terminate()
         p.join()
         print('Убили ', params[1])
 
 while True:
-    
     TCPs = interface.get_row(TcpInfo)
     if not TCPs:
         continue
@@ -76,9 +76,9 @@ while True:
         timeout, request_interval = TCP['timeout'], TCP['request_interval']
         params = (name, host, port, first_request, second_request, timeout, request_interval)
         tasks.append(params)
-    with ProcessPoolExecutor(max_workers=2) as executor:
+    with ProcessPoolExecutor(max_workers=NUM_WORKERS) as executor:
         executor.map(run_task_with_timeout, tasks)
-    time.sleep(17)
+    time.sleep(15)
     print('Получаем новые данные')
         
         
