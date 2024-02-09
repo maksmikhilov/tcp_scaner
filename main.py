@@ -3,6 +3,8 @@ import time
 import multiprocessing
 from db.interface import get_row, set_row
 from db import connection
+from db import interface
+
 def check_tcp(params):
     name, host, port, first_query, second_query, timeout, interval = params
     while True:
