@@ -8,7 +8,7 @@ Base = declarative_base()
 
 
 class TcpInfo(Base):
-    __tablename__ = 'tcp'
+    __tablename__ = 'tcp_info'
     name = Column(String, default=None)
     host = Column(String, default=None)
     port = Column(Integer, default=None)
@@ -19,7 +19,6 @@ class TcpInfo(Base):
 
 class TcpResult(Base):
     __tablename__ = 'tcp_result'
-
     name = Column(String, default=None)
     status = Column(String, default=None)
     tmstmp = Column(String, default=None)
