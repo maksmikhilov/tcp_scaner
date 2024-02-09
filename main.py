@@ -22,10 +22,12 @@ def check_tcp(params):
             first_response = s.recv(4096)
             print('Получили первый ответ: ', host)
            
+            """
             if second_request:
                 s.sendall(second_request.encode())
                 second_response = s.recv(4096)
                 print('Получили второй ответ: ', host)
+            """
             end_time = time.time()
             s.close()
             tcp_data = {
@@ -34,7 +36,7 @@ def check_tcp(params):
                 "tmstmp": time.time(),
                 "request_time": end_time - start_time,
                 "first_response": first_response,
-                "second_response": second_response
+                "second_response": 'second_response'
             }
             tcp_row = interface.get_row(TcpResult, (TcpResult.name == name))
             if tcp_row:
