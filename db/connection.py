@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from config import DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME
 from db import models
 
-engine = create_engine(f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
+engine = create_engine(f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}")
 
 SyncSession = sessionmaker(bind=engine)
 models.Base.metadata.create_all(engine)
