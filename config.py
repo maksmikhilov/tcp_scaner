@@ -1,5 +1,5 @@
 DB_USER = 'tcp_user'
 DB_PASS = '89172451'
 DB_HOST = '94.142.142.35'
-DB_PORT = '5432'
+DB_PORT = '3306'
 DB_NAME = 'tcp_test'
