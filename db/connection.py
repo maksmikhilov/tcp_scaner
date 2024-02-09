@@ -8,7 +8,6 @@ engine = create_engine(
 )
 Base = automap_base()
 Base.prepare(engine, reflect=True)
-Tcp_table = Base.classes.tcp
-print(Tcp_table)
+print(Base.metadata.tables)
 inspector = inspect(engine)
 print(inspector.get_columns('tcp'))
