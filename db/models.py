@@ -1,8 +1,10 @@
 import sqlalchemy as db
-from sqlalchemy import Column, Integer, String, Boolean, DateTime
+from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, DateTime, Text, create_engine
+
 from datetime import datetime
+from config import DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME
 
 Base = declarative_base()
 
@@ -25,5 +27,36 @@ class TcpResult(Base):
     status = Column(String(128), default=None)
     tmstmp = Column(String(128), default=None)
     request_time = Column(String(128), default=None)
-    first_response = Column(String(128), default=None)
-    second_response = Column(String(128), default=None)
+    connect_time = Column(Integer, default=None)
+    first_response = Column(Text, default=None)
+    second_response = Column(Text, default=None)
+
+
+engine = create_engine(f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}")
+Session = sessionmaker(bind=engine)
+
+Base.metadata.create_all(engine)
+with Session() as session:
+    table = session.query(TcpInfo)
+    if not list(table.all()):
+        first = {
+            "host": '176.113.83.95',
+            "port": 22,
+            "timeout": 3,
+            "request_interval": 3,
+            "first_request": 'bim',
+            "second_request": 'ueiekn',
+            "name": 'Server A'
+        }
+        second = {
+            "host": '45.141.102.225',
+            "port": 22,
+            "timeout": 3,
+            "request_interval": 3,
+            "first_request": 'poe',
+            "second_request": 'bsjs',
+            "name": 'Server b'
+        }
+        session.add(TcpInfo(**first))
+        session.add(TcpInfo(**second))
+        session.commit()

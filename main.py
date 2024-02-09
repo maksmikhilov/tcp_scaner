@@ -12,11 +12,14 @@ def check_tcp(params):
     while True:
         try:
             print('Запрос к ', host)
+            connect_start = time.time()
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(3)
-            start_time = time.time()
             s.connect((host, port))
-            
+            connect_end = time.time()
+
+
+            request_start = time.time()
             s.sendall(first_request.encode())
             first_response = s.recv(4096)
             print('Получили первый ответ: ', host)
@@ -27,17 +30,19 @@ def check_tcp(params):
                 second_response = s.recv(4096)
                 print('Получили второй ответ: ', host)
             """
-            end_time = time.time()
+            request_end = time.time()
             s.close()
             tcp_data = {
                 "name": name,
                 "status": "ok",
                 "tmstmp": time.time(),
-                "request_time": end_time - start_time,
+                "request_time": request_end - request_start,
+                "connect_time": connect_end - connect_start,
                 "first_response": first_response,
                 "second_response": 'second_response'
             }
             tcp_row = interface.get_row(TcpResult, (TcpResult.name == name))
+            print(tcp_row)
             if tcp_row:
                 interface.update_row(TcpResult, (TcpResult.name == name), tcp_data)
                 print('Обновили запись: ', host)
