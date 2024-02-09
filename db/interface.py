@@ -11,7 +11,7 @@ def update_row(Table, filter_condition, update_data):
                 session.query(Table).filter(filter_condition).update(update_data, synchronize_session='fetch')
                 session.commit()
     except Exception as e:
-        print(e)
+        print('Update: ', e)
         session.rollback()
 
 def get_row(Table, filter_condition=None):
@@ -25,7 +25,7 @@ def get_row(Table, filter_condition=None):
                 print([vars(obj) for obj in list(table.all())])
                 return [vars(obj) for obj in list(table.all())]
     except Exception as e:
-        print(e)
+        print('Get: ', e)
         session.rollback()
         
 def delete_row(Table, filter_condition):
@@ -35,7 +35,7 @@ def delete_row(Table, filter_condition):
                 session.query(Table).filter(filter_condition).delete(synchronize_session='fetch')
                 session.commit()
     except Exception as e:
-        print(e)
+        print('delete: ', e)
         session.rollback()
 
 def set_row(Table, set_data):
@@ -45,6 +45,6 @@ def set_row(Table, set_data):
                 session.add(Table(**set_data))
                 session.commit()
     except Exception as e:
-        print(e)
+        print('Set: ', e)
         session.rollback()
         

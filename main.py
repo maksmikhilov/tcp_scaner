@@ -42,7 +42,7 @@ def check_tcp(params):
             s.close()
             time.sleep(6)
         except Exception as e:
-            print(e)
+            print('Check: ', e)
         
         
 def run_task_with_timeout(params):
