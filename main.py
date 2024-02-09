@@ -18,7 +18,7 @@ def check_tcp(params):
             s.settimeout(2)
             start_time = time.time()
             s.connect((host, port))
-            for query in [first_query, second_query]:
+            for query in [first_query]:
                 s.send(query.encode())
                 response = s.recv(1024)
                 print(query, response)
@@ -33,7 +33,7 @@ def check_tcp(params):
                 "tmstmp": time.time(),
                 "request_time": wait_time,
                 "first_response": responses[0],
-                "second_response": responses[1]
+                "second_response": 'ghj'
             }
             print(tcp_data)
             tcp_row = interface.get_row(Tcp_info, (Tcp_info.host == host, Tcp_info.port == port))
