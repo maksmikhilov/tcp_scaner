@@ -13,10 +13,10 @@ def check_tcp(params):
     name, host, port, first_request, second_request, timeout, request_interval = params
     while True:
         try:
-            print('Запрос к ', host)
+            print('Запрос к ', name)
             connect_start = time.time()
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.settimeout(5)
+            s.settimeout(timeout)
             s.connect((host, port))
             connect_end = time.time()
 
@@ -24,7 +24,7 @@ def check_tcp(params):
             request_start = time.time()
             s.sendall(first_request.encode())
             first_response = s.recv(4096)
-            print('Получили первый ответ: ', host)
+            print('Получили первый ответ: ', name)
            
             """
             if second_request:
@@ -46,12 +46,12 @@ def check_tcp(params):
             tcp_row = interface.get_row(TcpResult, (TcpResult.name == name))
             if tcp_row:
                 interface.update_row(TcpResult, (TcpResult.name == name), tcp_data)
-                print('Обновили запись: ', host)
+                print('Обновили запись: ', name)
             else:
                 interface.set_row(TcpResult, tcp_data)
-                print('Сделали запись: ', host)
+                print('Сделали запись: ', name)
             
-            time.sleep(6)
+            time.sleep(request_interval)
         except Exception as e:
             print('Check: ', e)
         
@@ -59,11 +59,11 @@ def check_tcp(params):
 def run_task_with_timeout(params):
     p = multiprocessing.Process(target=check_tcp, args=(params,))
     p.start()
-    p.join(timeout=12)
+    p.join(timeout=RELOAD_DATA - 15)
     if p.is_alive():
         p.terminate()
         p.join()
-        print('Убили ', params[1])
+        print('Убили ', params[0])
 
 while True:
     TCPs = interface.get_row(TcpInfo)
@@ -78,7 +78,7 @@ while True:
         tasks.append(params)
     with ProcessPoolExecutor(max_workers=NUM_WORKERS) as executor:
         executor.map(run_task_with_timeout, tasks)
-    time.sleep(15)
+    time.sleep(RELOAD_DATA)
     print('Получаем новые данные')
         
         
