@@ -22,8 +22,8 @@ def get_row(Table, filter_condition=None):
                 if filter_condition is not None:
                     table = table.filter(filter_condition)
                     return table.first()
-                print(list(table.all()))
-                return list(table.all())
+                print([vars(obj) for obj in list(table.all())])
+                return [vars(obj) for obj in list(table.all())]
     except Exception as e:
         print(e)
         session.rollback()
