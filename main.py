@@ -40,7 +40,7 @@ while True:
     for TCP in TCPs:
         name, host, port = TCP.name, TCP.host, TCP.port
         first_query, second_query = TCP.first_query, TCP.second_query
-        timeout, interval = TCP.timeout, TCP.interval
+        timeout, interval = TCP.timeout, TCP.request_interval
         params = (name, host, port, first_query, second_query, timeout, interval)
         tasks.append(params)
         with multiprocessing.Pool(64) as pool:
