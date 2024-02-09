@@ -59,9 +59,9 @@ while True:
     TCPs = interface.get_row(TcpInfo)
     tasks = []
     for TCP in TCPs:
-        name, host, port = TCP.name, TCP.host, TCP.port
-        first_query, second_query = TCP.first_query, TCP.second_query
-        timeout, request_interval = TCP.timeout, TCP.request_interval
+        name, host, port = TCP['name'] , TCP['host'], TCP['host']
+        first_query, second_query = TCP['first_query'], TCP['second_query']
+        timeout, request_interval = TCP['timeout'], TCP['request_interval']
         params = (name, host, port, first_query, second_query, timeout, request_interval)
         tasks.append(params)
     with ProcessPoolExecutor(max_workers=2) as executor:
