@@ -8,7 +8,7 @@ Base = declarative_base()
 
 
 class TcpInfo(Base):
-    __tablename__ = 'tcp_info'
+    __tablename__ = 'tcp'
 
     id = Column(Integer, primary_key=True)
     name = Column(String, default=None)
