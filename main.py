@@ -9,7 +9,7 @@ from db.models import TcpResult, TcpInfo
 print(TcpResult)
 
 def check_tcp(params):
-    name, host, port, first_query, second_query, timeout, request_interval = params
+    name, host, port, first_request, second_request, timeout, request_interval = params
     while True:
         responses = []
         try:
@@ -18,8 +18,8 @@ def check_tcp(params):
             s.settimeout(2)
             start_time = time.time()
             s.connect((host, port))
-            for query in [first_query]:
-                s.send(query.encode())
+            for request in [first_request]:
+                s.send(request.encode())
                 response = s.recv(1024)
                 responses.append(response)
             
@@ -60,9 +60,9 @@ while True:
     tasks = []
     for TCP in TCPs:
         name, host, port = TCP['name'] , TCP['host'], TCP['host']
-        first_query, second_query = TCP['first_query'], TCP['second_query']
+        first_request, second_request = TCP['first_request'], TCP['second_request']
         timeout, request_interval = TCP['timeout'], TCP['request_interval']
-        params = (name, host, port, first_query, second_query, timeout, request_interval)
+        params = (name, host, port, first_request, second_request, timeout, request_interval)
         tasks.append(params)
     with ProcessPoolExecutor(max_workers=2) as executor:
         executor.map(run_task_with_timeout, tasks)
