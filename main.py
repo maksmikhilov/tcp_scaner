@@ -59,10 +59,10 @@ while True:
         timeout, interval = TCP.timeout, TCP.request_interval
         params = (name, host, port, first_query, second_query, timeout, interval)
         tasks.append(params)
-        with ProcessPoolExecutor(max_workers=2) as executor:
-            executor.map(run_task_with_timeout, tasks)
-        time.sleep(10)
-        print('Получаем новые данные')
+    with ProcessPoolExecutor(max_workers=2) as executor:
+        executor.map(run_task_with_timeout, tasks)
+    time.sleep(10)
+    print('Получаем новые данные')
         
         
         
