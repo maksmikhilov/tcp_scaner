@@ -8,3 +8,4 @@ engine = create_engine(
 )
 Base = automap_base()
 Base.prepare(engine, reflect=True)
+Tcp_table = Base.classes.tcp
