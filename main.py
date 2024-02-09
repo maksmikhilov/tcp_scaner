@@ -2,13 +2,15 @@ import socket
 import time
 import multiprocessing
 from concurrent.futures import ProcessPoolExecutor
-from db.interface import get_row, set_row
 from db import connection
 from db import interface
 
+Tcp_info = connection.Base.metadata.tables['tcp']
+Tcp_result = connection.Base.metadata.tables['tcp_result']
 def check_tcp(params):
     name, host, port, first_query, second_query, timeout, interval = params
     while True:
+        responses = []
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(timeout)
@@ -16,13 +18,20 @@ def check_tcp(params):
             s.connect((host, port))
             for query in [first_query, second_query]:
                 s.send(query.encode())
-                response = s.recv(1024)
-                print(response)
+                responses.append(s.recv(1024))
             end_time = time.time()
             wait_time = end_time - start_time
-            print(wait_time)
             s.close()
             time.sleep(interval)
+            tcp_data = {
+                "name": name,
+                "status": "ok",
+                "tmstmp": time.time(),
+                "request_time": wait_time,
+                "first_response": responses[0],
+                "second_response": responses[1]
+            }
+            interface.set_row(Tcp_result, tcp_data)
         except Exception as e:
             print(e)
         
@@ -30,15 +39,13 @@ def check_tcp(params):
 def run_task_with_timeout(params):
     p = multiprocessing.Process(target=check_tcp, args=(params,))
     p.start()
-    p.join(timeout=5)
+    p.join(timeout=8)
     if p.is_alive():
         p.terminate()
         p.join()
-    
-Tcp_table = connection.Base.metadata.tables['tcp'] 
+
 while True:
-    TCPs = get_row(Tcp_table)
-    print(TCPs)
+    TCPs = interface.get_row(Tcp_info)
     tasks = []
     for TCP in TCPs:
         name, host, port = TCP.name, TCP.host, TCP.port
@@ -48,6 +55,7 @@ while True:
         tasks.append(params)
         with ProcessPoolExecutor(max_workers=2) as executor:
             executor.map(run_task_with_timeout, tasks)
+        time.sleep(10)
         
         
         
