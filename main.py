@@ -55,6 +55,7 @@ def run_task_with_timeout(params):
         print('Убили ', params[1])
 
 while True:
+    
     TCPs = interface.get_row(TcpInfo)
     tasks = []
     for TCP in TCPs:
