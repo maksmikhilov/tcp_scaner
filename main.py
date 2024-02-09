@@ -31,7 +31,8 @@ def run_task_with_timeout(params):
     if p.is_alive():
         p.terminate()
         p.join()
-        
+    
+Tcp_table = connection.Base.metadata.tables['tcp'] 
 while True:
     TCPs = get_row(Tcp_table)
     print(TCPs)
