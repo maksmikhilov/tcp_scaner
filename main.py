@@ -4,9 +4,8 @@ import multiprocessing
 from concurrent.futures import ProcessPoolExecutor
 from db import connection
 from db import interface
+from db.models import Tcp_result, Tcp_info
 
-Tcp_info = connection.Base.metadata.tables['tcp']
-Tcp_result = connection.Base.metadata.tables['tcp_result']
 print(Tcp_result)
 
 def check_tcp(params):
@@ -22,12 +21,10 @@ def check_tcp(params):
             for query in [first_query]:
                 s.send(query.encode())
                 response = s.recv(1024)
-                print(query, response)
                 responses.append(response)
             
             end_time = time.time()
             wait_time = end_time - start_time
-            print(wait_time)
             tcp_data = {
                 "name": name,
                 "status": "ok",
@@ -39,7 +36,7 @@ def check_tcp(params):
             print(tcp_data)
             tcp_row = interface.get_row(Tcp_result, (Tcp_result.name == name))
             if tcp_row:
-                interface.update_row(Tcp_info, (Tcp_info.host == host, Tcp_info.port == port), tcp_data)
+                interface.update_row(Tcp_result, (Tcp_result.name == name), tcp_data)
             else:
                 interface.set_row(Tcp_result, tcp_data)
             s.close()
