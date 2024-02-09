@@ -6,8 +6,7 @@ import multiprocessing
 from db.interface import get_row, set_row
 from db.connection import Base
 
-Tcp_params = Base.classes.tcp_params
-Tcp_result = Base.classes.tcp_result
+Tcp_table= Base.classes.tcp
 
 def check_tcp(params):
     name, host, port, first_query, second_query, timeout, interval = params
@@ -37,7 +36,8 @@ def run_task_with_timeout(params):
         p.join()
         
 while True:
-    TCPs = get_row(Tcp_params)
+    TCPs = get_row(Tcp_table)
+    print(TCPs)
     tasks = []
     for TCP in TCPs:
         name, host, port = TCP.name, TCP.host, TCP.port
