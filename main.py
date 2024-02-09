@@ -14,7 +14,7 @@ def check_tcp(params):
         try:
             print('Запрос к ', host)
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.settimeout(5)
+            s.settimeout(10)
             start_time = time.time()
             s.connect((host, port))
             
@@ -44,7 +44,7 @@ def check_tcp(params):
                 interface.set_row(TcpResult, tcp_data)
                 print('Сделали запись: ', host)
             
-            time.sleep(10)
+            time.sleep(15)
         except Exception as e:
             print('Check: ', e)
         
@@ -52,7 +52,7 @@ def check_tcp(params):
 def run_task_with_timeout(params):
     p = multiprocessing.Process(target=check_tcp, args=(params,))
     p.start()
-    p.join(timeout=20)
+    p.join(timeout=35)
     if p.is_alive():
         p.terminate()
         p.join()
@@ -70,7 +70,7 @@ while True:
         tasks.append(params)
     with ProcessPoolExecutor(max_workers=2) as executor:
         executor.map(run_task_with_timeout, tasks)
-    time.sleep(25)
+    time.sleep(38)
     print('Получаем новые данные')
         
         
