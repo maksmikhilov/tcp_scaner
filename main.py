@@ -64,11 +64,7 @@ while True:
     tasks = []
     for TCP in TCPs:
         name, host, port = TCP['name'] , TCP['host'], TCP['port']
-        first_request, = TCP['first_request']
-        try:
-            second_request = TCP['second_request']
-        except:
-            second_request = None
+        first_request, second_request= TCP['first_request'], TCP['second_request']
         timeout, request_interval = TCP['timeout'], TCP['request_interval']
         params = (name, host, port, first_request, second_request, timeout, request_interval)
         tasks.append(params)
