@@ -1,7 +1,6 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import insert, select, update, delete
 from db.connection import engine 
-from models import Base, Message
 
 SyncSession = sessionmaker(bind=engine)
 
