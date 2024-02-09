@@ -6,6 +6,7 @@ import multiprocessing
 from db.interface import get_row, set_row
 from db.connection import Base
 
+print(Base.classes)
 Tcp_table= Base.classes.tcp
 
 def check_tcp(params):
