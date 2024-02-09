@@ -11,18 +11,20 @@ print(TcpResult)
 def check_tcp(params):
     name, host, port, first_request, second_request, timeout, request_interval = params
     while True:
-        responses = []
         try:
             print('Запрос к ', host)
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.settimeout(2)
+            s.settimeout(timeout)
             start_time = time.time()
             s.connect((host, port))
-            for request in [first_request]:
-                s.send(request.encode())
-                response = s.recv(1024)
-                responses.append(response)
             
+            s.sendall(first_request.encode())
+            first_response = s.recv(4096)
+            
+            s.sendall(second_request.encode())
+            second_response = s.recv(4096)
+            
+            s.close()
             end_time = time.time()
             wait_time = end_time - start_time
             tcp_data = {
@@ -30,17 +32,16 @@ def check_tcp(params):
                 "status": "ok",
                 "tmstmp": time.time(),
                 "request_time": wait_time,
-                "first_response": responses[0],
-                "second_response": 'ghj'
+                "first_response": first_response,
+                "second_response": second_response
             }
-            print(tcp_data)
             tcp_row = interface.get_row(TcpResult, (TcpResult.name == name))
             if tcp_row:
                 interface.update_row(TcpResult, (TcpResult.name == name), tcp_data)
             else:
                 interface.set_row(TcpResult, tcp_data)
-            s.close()
-            time.sleep(6)
+            
+            time.sleep(request_interval)
         except Exception as e:
             print('Check: ', e)
         
